@@ -9,7 +9,15 @@
   "author": "pelumi omotesho",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.3",
     "mongodb": "^2.2.19",
     "mongoose": "^5.0.9"
+  },
+  "devDependencies": {
+    "expect": "^22.4.3",
+    "mocha": "^5.0.5",
+    "nodemon": "^1.17.2",
+    "supertest": "^3.0.0"
   }
 }
