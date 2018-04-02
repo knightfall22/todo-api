@@ -1,6 +1,7 @@
    //3rd party modules
    var express = require('express'),
    bodyParser  = require('body-parser'),
+    {ObjectId} = require('mongodb'),
    //local modules
     {mongoose} = require('../db/mongoose'),
         {Todo} = require('./models/todo'),
@@ -29,7 +30,22 @@
         },(e) => {
             res.status(400).send(e)
         })
-    })
+    });
+
+    app.get('/todos/:id',(req,res) => {
+        var _id = req.params.id;
+        if (!ObjectId.isValid(_id)) {
+            return res.status(404).send();
+        }
+        Todo.findById({_id}).then((todos) => {
+            if(!todos){
+              return res.status(404).send();  
+            }
+             res.send({todos})  
+        },(e) => {
+            res.status(400).send();
+        })
+    });
 
     app.listen(4000,() => {
         console.log('server started');
