@@ -1,4 +1,5 @@
-   //3rd party modules
+ require('./config/config');
+ //3rd party modules
    var express = require('express'),
    bodyParser  = require('body-parser'),
     {ObjectId} = require('mongodb'),
@@ -12,7 +13,7 @@
 
     app.use(bodyParser.json());
 
-    var port = process.env.PORT || 3000;
+    var port = process.env.PORT;
 
     app.post('/todos', (req,res) => {
        var todo = new Todo({
@@ -94,10 +95,26 @@
             return res.status(400).send(e);
         })
     })
+//USERS
+    app.post('/users',(req,res) => {
 
+        var body = _.pick(req.body, ['email','password']);
+        
+        var user = new User(body);
+
+        user.save().then(() => {
+            return user.generateAuthToken();
+        }).then((token) => {
+             res.header('x-auth',token).send(user);
+        }).catch((e) => {
+            return res.status(400).send(e);
+            
+            
+        })
+    })
 
     app.listen(port,() => {
-        console.log('server started');
+        console.log(`server started ${port}`);
     });
 
     module.exports = {app};
