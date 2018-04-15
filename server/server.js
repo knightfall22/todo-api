@@ -1,13 +1,15 @@
  require('./config/config');
+ 
  //3rd party modules
-   var express = require('express'),
-   bodyParser  = require('body-parser'),
-    {ObjectId} = require('mongodb'),
-             _ = require('lodash'),
+       const express = require('express'),
+       bodyParser  = require('body-parser'),
+        {ObjectId} = require('mongodb'),
+                 _ = require('lodash'),
    //local modules
-    {mongoose} = require('../db/mongoose'),
-        {Todo} = require('./models/todo'),
-        {User} = require('./models/user');
+        {mongoose} = require('../db/mongoose'),
+            {Todo} = require('./models/todo'),
+            {User} = require('./models/user'),
+    {authenticate} = require('./middleware/authenticate');    
 
     var app = express();
 
@@ -111,6 +113,12 @@
             
             
         })
+    });
+
+   
+
+    app.get('/users/me',authenticate,(req,res) => {
+           res.send(req.user);
     })
 
     app.listen(port,() => {
