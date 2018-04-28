@@ -1,38 +1,53 @@
- const {SHA256} = require('crypto-js'),
-            jwt = require('jsonwebtoken');
+const  {SHA256} = require('crypto-js'),
+            jwt = require('jsonwebtoken'),
+        bcrypt  = require('bcryptjs'); 
+    
+let password = '123abc';
 
- let data = {
-     id:10
- };
+// bcrypt.genSalt(10,(err,salt) => {
+//     bcrypt.hash(password,salt,(err,hash) => {
+//         console.log(hash);
+        
+//     })
+// });
 
- let token = jwt.sign(data, '123abc');
- console.log(`The Encodded Data :${token}`);
+let hashedPassword = '$2a$10$Z8bmHU/v5vJSPk6xhfopdOtpjHhb/NnpGf8rrBwpvx.s5chmMJ9P2';
 
- let decode = jwt.verify(token,'123abc');
- console.log(`The Encoded Data`,decode);
+bcrypt.compare(password,hashedPassword,(err,res) => {
+     console.log(res); 
+});
+//  let data = {
+//      id:10
+//  };
+
+//  let token = jwt.sign(data, '123abc');
+//  console.log(`The Encodded Data :${token}`);
+
+//  let decode = jwt.verify(token,'123abc');
+//  console.log(`The Encoded Data`,decode);
  
-// let message = 'i am ready to be new again',
-//       hash  = SHA256(message).toString();
+// // let message = 'i am ready to be new again',
+// //       hash  = SHA256(message).toString();
 
-// // console.log(`The Message: ${message}`);
-// // console.log(`The Hash: ${hash}`);
+// // // console.log(`The Message: ${message}`);
+// // // console.log(`The Hash: ${hash}`);
 
-// let data = {
-//     id:4
-// };
+// // let data = {
+// //     id:4
+// // };
 
-// let token = {
-//     data,
-//     hash: SHA256(JSON.stringify(data)+ 'somesecret').toString()
-// }
+// // let token = {
+// //     data,
+// //     hash: SHA256(JSON.stringify(data)+ 'somesecret').toString()
+// // }
 
-// token.data.id = 5;
-// token.hash = SHA256(JSON.stringify(token.data)).toString();
+// // token.data.id = 5;
+// // token.hash = SHA256(JSON.stringify(token.data)).toString();
 
-// let returnHash = SHA256(JSON.stringify(token.data)+ 'somesecret').toString();
+// // let returnHash = SHA256(JSON.stringify(token.data)+ 'somesecret').toString();
 
-// if(returnHash === token.hash){
-//     console.log('Data was not changed');   
-// }else{
-//     console.log('Data was Changed');
-// }
+// // if(returnHash === token.hash){
+// //     console.log('Data was not changed');   
+// // }else{
+// //     console.log('Data was Changed');
+// // }

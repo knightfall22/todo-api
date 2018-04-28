@@ -2,28 +2,15 @@
         request = require('supertest'),
           {app} = require('./../server'),
      {ObjectId} = require('mongodb'),
-         {Todo} = require('./../models/todo');
+         {Todo} = require('./../models/todo'),
+        {todos,populateTodos,users,populateUsers} = require('./seed/seed');
        
 
-const todos = [{
-    _id:new ObjectId(),
-    text:'buy flowers',
-    completed:true,
-    completedAt: new Date().getTime()
-},{
-    _id:new ObjectId(),
-    text: 'buy new tv',
-    completed: false,
-    
-}];
 
-beforeEach((done) => {
-    Todo.remove({}).then(() => done())
-});
 
-beforeEach((done) => {
-    Todo.insertMany(todos).then(() => done())
-})
+beforeEach(populateUsers);
+
+
 
 describe('POST/todo',() => {
     it('should create a new todo',(done) => {
@@ -37,14 +24,14 @@ describe('POST/todo',() => {
             })
             .end((err,res) => {
                 if(err){
-                    return done(err)
+                    return done(err);
                 }
 
                 Todo.find({text}).then((todos) => {
                     expect(todos.length).toBe(1);
                     expect(todos[0].text).toBe(text);
-                    done()
-                }).catch((e) => e)
+                    done();
+                }).catch((e) => done(e))
             })
     });
 
@@ -61,7 +48,7 @@ describe('POST/todo',() => {
                 Todo.find().then((todos) => {
                     expect(todos.length).toBe(2)
                     done()
-                }).catch((e) => e)
+                }).catch((e) => done(e))
 
             })
     })

@@ -1,7 +1,8 @@
 const mongoose = require('mongoose'),
      validator = require('validator'),
           jwt  = require('jsonwebtoken'),
-            _  = require('lodash');
+            _  = require('lodash'),
+      bcryptjs = require('bcryptjs');
 
 let UserSchema = new mongoose.Schema({
     email: {
@@ -33,23 +34,32 @@ let UserSchema = new mongoose.Schema({
 });
 
 UserSchema.methods.toJSON = function () {
-    var user = this;
-    var userObject = user.toObject();
+    let user = this;
+    let userObject = user.toObject();
 
    return  _.pick(userObject,['_id','email']);
     
 }
 
+
 UserSchema.methods.generateAuthToken = function () {
     let user = this,
       access = 'auth',
-      token  = jwt.sign({_id: user._id.toHexString(),access}, 'abc123').toString();
-     
-    user.tokens.push({access,token});
+      token  = jwt.sign({_id:user._id.toHexString(),access},'abc123').toString();
+    //   token  = jwt.sign({_id:user._id.toHexString(),access},'abc123').toString();
+      user.push({access,token});
 
-    return user.save().then(()=> {
-        return token
-    })
+      return user.save().then(() => {
+          return token;
+      })
+    
+    // user.tokens.push({access,token})
+
+    // return user.save().then(() => {
+    //     return token;
+    // })
+     
+
 }
 
 UserSchema.statics.findByToken = function (token) {
@@ -61,18 +71,34 @@ UserSchema.statics.findByToken = function (token) {
         // return new Promise((resolve,reject) => {
         //     reject();
         // })
-        return Promise.reject();
+        return Promise.reject(); 
     }
     return User.findOne({
         '_id': decoded._id,
         'tokens.token':token,
         'tokens.access':'auth'
     })
-}
+};
+
+UserSchema.pre('save', function (next){
+    let user = this;
+    if(user.isModified('password')) {
+        bcryptjs.genSalt(10,(err,salt) => {
+            bcryptjs.hash(user.password,salt, (err,hash) => {
+                user.password = hash;
+                next();
+            })
+        })
+    }
+    else{
+        next();
+    }
+    
+})
 
 let User = mongoose.model('User', UserSchema);
 
-// var newUser = new User({
+// let newUser = new User({
 //     email: ' pelumi@gmail.com  '
 // });
 
