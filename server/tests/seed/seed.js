@@ -33,7 +33,8 @@ const todos = [{
 
 }];
 
-const populateTodos = (done) => {
+const populateTodos = function (done)  {
+    this.timeout(20000);
     Todo.remove({}).then(() => {
         return Todo.insertMany(todos)
     }).then(() => {
@@ -41,7 +42,8 @@ const populateTodos = (done) => {
     })
 }
 
-const populateUsers = (done) => {
+const populateUsers = function (done)  {
+    this.timeout(20000);
     User.remove({}).then(() => {
         let userOne = new User(users[0]).save(),
             userTwo = new User(users[1]).save();

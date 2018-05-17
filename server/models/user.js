@@ -46,39 +46,46 @@ UserSchema.methods.generateAuthToken = function () {
     let user = this,
       access = 'auth',
       token  = jwt.sign({_id:user._id.toHexString(),access},'abc123').toString();
-    //   token  = jwt.sign({_id:user._id.toHexString(),access},'abc123').toString();
-      user.push({access,token});
+      user.tokens.push({access,token});
 
       return user.save().then(() => {
           return token;
       })
-    
-    // user.tokens.push({access,token})
-
-    // return user.save().then(() => {
-    //     return token;
-    // })
-     
-
 }
 
 UserSchema.statics.findByToken = function (token) {
     let User = this,
-        decoded;
+    decoded;
     try {
         decoded = jwt.verify(token,'abc123');
     } catch (e) {
-        // return new Promise((resolve,reject) => {
-        //     reject();
-        // })
-        return Promise.reject(); 
+      return  Promise.reject()
     }
+
     return User.findOne({
-        '_id': decoded._id,
-        'tokens.token':token,
+        '_id':decoded._id,
+        'tokens.token': token,
         'tokens.access':'auth'
     })
+
 };
+UserSchema.statics.findByCredentials = function (email,password) {
+    let User = this;
+   return User.findOne({email}).then((user) => {
+        if (!user) {
+            return Promise.reject();
+        }
+
+        return new Promise((resolve,reject) => {
+            bcryptjs.compare(password,user.password,(err,res)=>{
+                if(res){
+                     return resolve(user);
+                }
+                 return reject();
+            })
+        })
+    })
+}
 
 UserSchema.pre('save', function (next){
     let user = this;
