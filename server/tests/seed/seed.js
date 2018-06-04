@@ -12,24 +12,30 @@ const users = [{
     password: 'userpass21@',
     tokens: [{
         access:'auth',
-        token: jwt.sign({_id:userOneId.toHexString(),access:'auth'},'abc123').toString()
+        token: jwt.sign({_id:userOneId.toHexString(),access:'auth'},process.env.JWT_SECRET).toString()
     }]
 },
 {
     _id:userTwoId,
     email:'Squeeeeeps@gmai.com',
-    password: 'user2pass@'
+    password: 'user2pass@',
+       tokens: [{
+        access:'auth',
+        token: jwt.sign({_id:userTwoId.toHexString(),access:'auth'},process.env.JWT_SECRET).toString()
+    }]
 }]
 
 const todos = [{
     _id: new ObjectId(),
     text: 'buy flowers',
     completed: true,
-    completedAt: new Date().getTime()
+    completedAt: new Date().getTime(),
+    _creator: userOneId
 }, {
     _id: new ObjectId(),
     text: 'buy new tv',
     completed: false,
+    _creator: userTwoId
 
 }];
 
