@@ -250,7 +250,7 @@ describe('GET /users/me',() => {
             .end(done)
     })
 
-    it('Should return a 404 if not authenticated',(done) => {
+    it('Should return a 401 if not authenticated',(done) => {
         request(app)
             .get('/users/me')
             .expect(401)
